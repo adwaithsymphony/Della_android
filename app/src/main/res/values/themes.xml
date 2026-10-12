@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="della_bg">#07110D</color>
+    <color name="della_primary">#247A50</color>
+    <color name="della_accent">#72D6A0</color>
+
+    <style name="Theme.Della" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/della_bg</item>
+        <item name="android:statusBarColor">@color/della_bg</item>
+        <item name="android:navigationBarColor">@color/della_bg</item>
+        <item name="android:colorAccent">@color/della_accent</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>

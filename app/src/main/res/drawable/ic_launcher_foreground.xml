@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DELLA mark: a geometric "D" with a rising accent bar -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#247A50"
+        android:pathData="M36,32 L52,32 C66.4,32 76,41.6 76,54 C76,66.4 66.4,76 52,76 L36,76 Z M44,40 L44,68 L52,68 C61.6,68 68,62.4 68,54 C68,45.6 61.6,40 52,40 Z" />
+    <path android:fillColor="#72D6A0"
+        android:pathData="M48,60 L52,60 L52,64 L48,64 Z M54,54 L58,54 L58,64 L54,64 Z M60,48 L64,48 L64,64 L60,64 Z" />
+</vector>

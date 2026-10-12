@@ -1,0 +1,66 @@
+name: Build DELLA release APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Assemble signed release APK
+        id: build
+        run: |
+          chmod +x gradlew
+          set -o pipefail
+          ./gradlew --no-daemon --stacktrace assembleRelease 2>&1 | tee build.log
+
+      - name: Collect APK
+        if: success()
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk dist/DELLA-release.apk
+          "$ANDROID_HOME"/build-tools/*/apksigner verify --print-certs dist/DELLA-release.apk | tee dist/signature.txt
+          sha256sum dist/DELLA-release.apk | tee dist/DELLA-release.apk.sha256
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: DELLA-release
+          path: dist/
+
+      # Publish the APK (or the failing build log) to side branches so the
+      # result can be retrieved with plain git, without the GitHub API.
+      - name: Publish result branch
+        if: always()
+        run: |
+          git config user.name "della-ci"
+          git config user.email "della-ci@users.noreply.github.com"
+          mkdir -p /tmp/out
+          if [ -f dist/DELLA-release.apk ]; then
+            cp dist/* /tmp/out/; BRANCH=dist
+          else
+            cp build.log /tmp/out/ 2>/dev/null || echo "no log" > /tmp/out/build.log; BRANCH=ci-logs
+          fi
+          echo "${GITHUB_SHA}" > /tmp/out/SOURCE_COMMIT
+          git checkout --orphan "$BRANCH"
+          git rm -rf . > /dev/null
+          git clean -fdx -e build.log > /dev/null
+          rm -f build.log
+          cp /tmp/out/* .
+          git add -A
+          git commit -m "CI result for ${GITHUB_SHA}"
+          git push -f origin "$BRANCH"
